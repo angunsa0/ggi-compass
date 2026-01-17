@@ -72,7 +72,7 @@ const ProductDetail = () => {
       
       <main className="pt-20">
         <div className="max-w-7xl mx-auto px-6 py-12">
-          <Link to="/#products" className="inline-flex items-center text-muted-foreground hover:text-primary mb-8 transition-colors">
+          <Link to="/products/category/all" className="inline-flex items-center text-muted-foreground hover:text-primary mb-8 transition-colors">
             <ArrowLeft className="mr-2 h-4 w-4" />
             제품 목록으로 돌아가기
           </Link>
