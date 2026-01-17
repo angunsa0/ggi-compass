@@ -1,5 +1,7 @@
 import { ExternalLink, Play, BadgeCheck, Building2, Leaf, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import heroClassroom from '@/assets/hero-classroom.jpg';
+
 const features = [{
   icon: BadgeCheck,
   title: '여성기업',
@@ -17,6 +19,7 @@ const features = [{
   title: '품질 보증',
   description: 'KS 규격 및 조달청 품질검사를 통과한 신뢰의 제품'
 }];
+
 export const HeroSection = () => {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -28,10 +31,13 @@ export const HeroSection = () => {
     }
   };
   return <section id="hero" className="relative min-h-screen">
-      {/* Hero Background - Bright gradient */}
-      <div className="absolute inset-0 bg-cover bg-center" style={{
-      backgroundImage: `linear-gradient(to bottom right, hsl(185 60% 95%), hsl(180 30% 98%), hsl(0 0% 100%))`
-    }} />
+      {/* Hero Background - Real classroom image with overlay */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${heroClassroom})` }}
+      />
+      {/* Light overlay for readability */}
+      <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-white/40" />
       
       {/* Hero Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 pt-40 pb-20">
