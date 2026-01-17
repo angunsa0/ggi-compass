@@ -4,10 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
-
 export const Footer = () => {
   const [email, setEmail] = useState('');
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
@@ -15,16 +13,15 @@ export const Footer = () => {
       setEmail('');
     }
   };
-
-  return (
-    <footer id="contact" className="bg-primary text-primary-foreground">
+  return <footer id="contact" className="bg-primary text-primary-foreground">
       <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div>
             <h2 className="text-3xl font-black mb-4">G.G.I</h2>
-            <div className="text-sm text-primary-foreground/80 leading-relaxed mb-6">
-              <span className="text-accent">G</span>lobal Standard<br />
+            <div className="text-sm text-primary-foreground/80 leading-relaxed mb-6">Global Standard
+Great Design
+Intelligent Specialist<span className="text-accent">G</span>lobal Standard<br />
               <span className="text-accent">G</span>reat Design<br />
               <span className="text-accent">I</span>nfrastructure Specialist
             </div>
@@ -35,11 +32,7 @@ export const Footer = () => {
               <div className="w-10 h-10 bg-primary-foreground/20 rounded-full flex items-center justify-center hover:bg-accent transition-colors cursor-pointer">
                 <span className="text-xs font-bold">S2B</span>
               </div>
-              <Link 
-                to="/admin/auth" 
-                className="w-10 h-10 bg-primary-foreground/20 rounded-full flex items-center justify-center hover:bg-accent transition-colors cursor-pointer"
-                title="관리자"
-              >
+              <Link to="/admin/auth" className="w-10 h-10 bg-primary-foreground/20 rounded-full flex items-center justify-center hover:bg-accent transition-colors cursor-pointer" title="관리자">
                 <Settings className="w-4 h-4" />
               </Link>
             </div>
@@ -74,8 +67,7 @@ export const Footer = () => {
                 <Printer className="w-4 h-4 text-accent" />
                 031-123-4568
               </p>
-              <p className="flex items-center gap-3 text-primary-foreground/80">
-                <Mail className="w-4 h-4 text-accent" />
+              <p className="flex items-center gap-3 text-primary-foreground/80">ggigagu@naver.com<Mail className="w-4 h-4 text-accent" />
                 ggi_furniture@ggi.co.kr
               </p>
               <p className="flex items-center gap-3 text-primary-foreground/80">
@@ -95,13 +87,7 @@ export const Footer = () => {
               견적 요청 및 제품 카탈로그 신청을 위해 연락처를 남겨주세요.
             </p>
             <form onSubmit={handleSubmit} className="flex gap-2">
-              <Input
-                type="email"
-                placeholder="이메일 주소"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-primary-foreground/20 border-primary-foreground/30 text-primary-foreground placeholder:text-primary-foreground/50 focus:border-accent"
-              />
+              <Input type="email" placeholder="이메일 주소" value={email} onChange={e => setEmail(e.target.value)} className="bg-primary-foreground/20 border-primary-foreground/30 text-primary-foreground placeholder:text-primary-foreground/50 focus:border-accent" />
               <Button type="submit" className="bg-accent hover:bg-accent/90 text-accent-foreground px-4">
                 <Send className="w-4 h-4" />
               </Button>
@@ -116,6 +102,5 @@ export const Footer = () => {
           © 2024 G.G.I Infrastructure. All Rights Reserved.
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
