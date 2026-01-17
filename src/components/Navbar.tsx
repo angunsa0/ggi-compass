@@ -51,8 +51,8 @@ export const Navbar = () => {
       <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
         <div className="flex items-center space-x-3">
           <span className="text-2xl font-black tracking-tighter text-primary">G.G.I</span>
-          <div className="hidden sm:block text-[10px] text-muted-foreground leading-tight uppercase tracking-wider">GLOBAL GREAT
-INTELLIGENT<br />Infrastructure
+          <div className="hidden sm:block text-[10px] text-muted-foreground leading-tight uppercase tracking-wider">GLOBAL GREAT INTELLIGENT
+          <br />​
           </div>
         </div>
         
