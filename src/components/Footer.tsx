@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Phone, Printer, Mail, MapPin, Send } from 'lucide-react';
+import { Phone, Printer, Mail, MapPin, Send, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
 
 export const Footer = () => {
   const [email, setEmail] = useState('');
@@ -34,6 +35,13 @@ export const Footer = () => {
               <div className="w-10 h-10 bg-primary-foreground/20 rounded-full flex items-center justify-center hover:bg-accent transition-colors cursor-pointer">
                 <span className="text-xs font-bold">S2B</span>
               </div>
+              <Link 
+                to="/admin/auth" 
+                className="w-10 h-10 bg-primary-foreground/20 rounded-full flex items-center justify-center hover:bg-accent transition-colors cursor-pointer"
+                title="관리자"
+              >
+                <Settings className="w-4 h-4" />
+              </Link>
             </div>
           </div>
 
