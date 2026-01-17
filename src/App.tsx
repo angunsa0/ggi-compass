@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
+import ProductList from "./pages/ProductList";
 import ProductDetail from "./pages/ProductDetail";
 import Admin from "./pages/Admin";
 import AdminAuth from "./pages/AdminAuth";
@@ -19,7 +20,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/products/:productId" element={<ProductDetail />} />
+          <Route path="/products/category/:categorySlug" element={<ProductList />} />
+          <Route path="/products/detail/:productId" element={<ProductDetail />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin/auth" element={<AdminAuth />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
