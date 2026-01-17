@@ -67,8 +67,9 @@ Intelligent Specialist<span className="text-accent">G</span>lobal Standard<br />
                 <Printer className="w-4 h-4 text-accent" />
                 031-123-4568
               </p>
-              <p className="flex items-center gap-3 text-primary-foreground/80">ggigagu@naver.com<Mail className="w-4 h-4 text-accent" />
-                ggi_furniture@ggi.co.kr
+              <p className="flex items-center gap-3 text-primary-foreground/80">
+                <Mail className="w-4 h-4 text-accent" />
+                ggigagu@naver.com
               </p>
               <p className="flex items-center gap-3 text-primary-foreground/80">
                 <MapPin className="w-4 h-4 text-accent" />
