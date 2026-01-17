@@ -53,7 +53,7 @@ export const Navbar = () => {
           <span className="text-2xl font-black tracking-tighter text-primary">G.G.I
         </span>
           <div className="hidden sm:block text-[10px] text-muted-foreground leading-tight uppercase tracking-wider">GLOBAL GREAT  
-INTELLIGENT​​​<br />​
+INTELLIGENT​​​​<br />​
           </div>
         </div>
         
