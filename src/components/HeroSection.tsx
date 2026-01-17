@@ -41,7 +41,7 @@ export const HeroSection = () => {
           </div>
           
           <div className="mb-8">
-            <h1 className="text-5xl md:text-7xl font-black text-primary-foreground leading-tight tracking-tight">ntelligent<span className="text-accent">G</span>lobal<br />
+            <h1 className="text-5xl md:text-7xl font-black text-primary-foreground leading-tight tracking-tight">​<span className="text-accent">G</span>lobal<br />
               <span className="text-accent">G</span>reat<br />
               <span className="text-accent">I</span> ntelligent
             </h1>
