@@ -2,6 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
+import officeChairImage from '@/assets/category-office-chair.png';
 
 // Static category data for the main page display
 const categories = [
@@ -21,7 +22,7 @@ const categories = [
   },
   {
     slug: 'office-chair',
-    image: 'https://images.unsplash.com/photo-1589384267710-7a25bc5b4862?q=80&w=800&auto=format&fit=crop',
+    image: officeChairImage,
     title: '오피스체어',
     description: '인체공학적 설계로 장시간 착석에도 편안한 프리미엄 오피스체어.',
     badges: ['인체공학', '높이 조절형'],
