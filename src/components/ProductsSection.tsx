@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import officeChairImage from '@/assets/category-office-chair.png';
 import blackboardCabinetImage from '@/assets/category-blackboard-cabinet.png';
+import workstationImage from '@/assets/category-workstation.jpg';
 
 // Static category data for the main page display
 const categories = [
@@ -16,7 +17,7 @@ const categories = [
   },
   {
     slug: 'workstation',
-    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop',
+    image: workstationImage,
     title: '워크스테이션',
     description: '업무 효율성을 극대화하는 모듈형 워크스테이션. 다양한 공간에 맞춤 설치 가능.',
     badges: ['KS 인증', '모듈형 설계'],
