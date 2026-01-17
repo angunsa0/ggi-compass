@@ -44,9 +44,7 @@ export const HeroSection = () => {
           </div>
           
           <div className="mb-8">
-            <h1 className="text-5xl md:text-7xl font-black text-foreground leading-tight tracking-tight">Global
-Great
-Intelligent<span className="text-primary">G</span>lobal<br />
+            <h1 className="text-5xl md:text-7xl font-black text-foreground leading-tight tracking-tight">​<span className="text-primary">G</span>lobal<br />
               <span className="text-primary">G</span>reat<br />
               <span className="text-primary">I</span>ntelligent
             </h1>
