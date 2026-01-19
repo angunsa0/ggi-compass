@@ -19,9 +19,9 @@ export const Footer = () => {
           {/* Brand */}
           <div>
             <h2 className="text-3xl font-black mb-4">G.G.I</h2>
-            <div className="text-sm text-primary-foreground/80 leading-relaxed mb-6">​Global Standard
+            <div className="text-sm text-primary-foreground/80 leading-relaxed mb-6">Global Standard
 Great Design
-Intelligent Specialist<span className="text-accent">G</span>lobal Standard<br />
+Infrastructure Specialist<span className="text-accent">G</span>lobal Standard<br />
               <span className="text-accent">G</span>reat Design<br />
               <span className="text-accent">I</span>nfrastructure Specialist
             </div>
