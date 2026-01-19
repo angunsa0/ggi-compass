@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Menu, X } from 'lucide-react';
-import ggiLogo from '@/assets/ggi-logo.png';
+import ggiLogo from '@/assets/ggi-ci-logo.png';
 
 const navItems = [{
   id: 'about',
