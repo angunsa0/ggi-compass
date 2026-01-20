@@ -4,41 +4,56 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Phone, Mail } from 'lucide-react';
+import { ArrowLeft, Phone, Mail, ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import type { Tables } from '@/integrations/supabase/types';
 
-type Product = Tables<'products'>;
+interface Product {
+  id: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  image_url: string | null;
+  badges: string[] | null;
+  features: string[] | null;
+  specs: Record<string, any> | null;
+  main_category: string | null;
+  subcategory: string | null;
+  procurement_id: string | null;
+  price: string | null;
+}
 
 const ProductDetail = () => {
-  const { productId } = useParams<{ productId: string }>();
+  const { productId, productSlug } = useParams<{ productId?: string; productSlug?: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const slug = productSlug || productId;
+
   useEffect(() => {
     const fetchProduct = async () => {
-      if (!productId) return;
+      if (!slug) return;
 
       const { data, error } = await supabase
         .from('products')
         .select('*')
-        .eq('slug', productId)
+        .eq('slug', slug)
         .maybeSingle();
 
       if (!error && data) {
-        setProduct(data);
+        setProduct(data as Product);
       }
       setIsLoading(false);
     };
 
     fetchProduct();
-  }, [productId]);
+  }, [slug]);
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
         <div className="max-w-7xl mx-auto px-6 py-24 text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-muted-foreground">로딩 중...</p>
         </div>
         <Footer />
@@ -52,7 +67,7 @@ const ProductDetail = () => {
         <Navbar />
         <div className="max-w-7xl mx-auto px-6 py-24 text-center">
           <h1 className="text-3xl font-bold text-primary mb-4">제품을 찾을 수 없습니다</h1>
-          <Link to="/#products">
+          <Link to="/product/all">
             <Button variant="outline">
               <ArrowLeft className="mr-2 h-4 w-4" />
               제품 목록으로 돌아가기
@@ -72,18 +87,31 @@ const ProductDetail = () => {
       
       <main className="pt-20">
         <div className="max-w-7xl mx-auto px-6 py-12">
-          <Link to="/products/category/all" className="inline-flex items-center text-muted-foreground hover:text-primary mb-8 transition-colors">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            제품 목록으로 돌아가기
-          </Link>
+          {/* Breadcrumb */}
+          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
+            <Link to="/" className="hover:text-primary">홈</Link>
+            <ChevronRight className="h-4 w-4" />
+            <Link to="/product/all" className="hover:text-primary">제품</Link>
+            {product.main_category && (
+              <>
+                <ChevronRight className="h-4 w-4" />
+                <Link to={`/product/${product.main_category}`} className="hover:text-primary">
+                  {product.main_category}
+                </Link>
+              </>
+            )}
+            <ChevronRight className="h-4 w-4" />
+            <span className="text-primary font-medium">{product.title}</span>
+          </nav>
 
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Product Image */}
             <div className="rounded-2xl overflow-hidden shadow-xl">
               <img
-                src={product.image_url || 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=1200&auto=format&fit=crop'}
+                src={product.image_url || '/placeholder.svg'}
                 alt={product.title}
                 className="w-full h-full object-cover aspect-[4/3]"
+                onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }}
               />
             </div>
 
@@ -91,20 +119,50 @@ const ProductDetail = () => {
             <div>
               <div className="flex flex-wrap gap-2 mb-4">
                 {product.badges?.map((badge) => (
-                  <Badge
-                    key={badge}
-                    variant="secondary"
-                    className="bg-accent/10 text-accent border-0 font-medium"
-                  >
+                  <Badge key={badge} variant="secondary" className="bg-accent/10 text-accent border-0 font-medium">
                     {badge}
                   </Badge>
                 ))}
               </div>
               
               <h1 className="text-4xl font-black text-primary mb-4">{product.title}</h1>
+              
+              {/* Procurement ID & Price */}
+              {(product.procurement_id || product.price) && (
+                <div className="bg-muted/50 rounded-lg p-4 mb-6 space-y-2">
+                  {product.procurement_id && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-primary">조달식별번호:</span>
+                      <span className="text-sm text-muted-foreground">{product.procurement_id}</span>
+                    </div>
+                  )}
+                  {product.price && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-primary">가격:</span>
+                      <span className="text-lg font-bold text-accent">{product.price}원</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
               <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
                 {product.description}
               </p>
+
+              {/* Specs */}
+              {specs && Object.keys(specs).length > 0 && (
+                <div className="mb-8">
+                  <h2 className="text-xl font-bold text-primary mb-4">제품 사양</h2>
+                  <div className="bg-muted/50 rounded-xl p-6 space-y-3">
+                    {Object.entries(specs).map(([key, value]) => (
+                      <div key={key} className="flex">
+                        <span className="font-medium text-primary w-28">{key}</span>
+                        <span className="text-muted-foreground">{value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Features */}
               {product.features && product.features.length > 0 && (
@@ -118,21 +176,6 @@ const ProductDetail = () => {
                       </li>
                     ))}
                   </ul>
-                </div>
-              )}
-
-              {/* Specs */}
-              {specs && Object.keys(specs).length > 0 && (
-                <div className="mb-8">
-                  <h2 className="text-xl font-bold text-primary mb-4">제품 사양</h2>
-                  <div className="bg-muted/50 rounded-xl p-6 space-y-3">
-                    {Object.entries(specs).map(([key, value]) => (
-                      <div key={key} className="flex">
-                        <span className="font-medium text-primary w-24">{key}</span>
-                        <span className="text-muted-foreground">{value}</span>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               )}
 

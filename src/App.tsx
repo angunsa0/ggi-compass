@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
-import ProductList from "./pages/ProductList";
+import ProductListNew from "./pages/ProductListNew";
 import ProductDetail from "./pages/ProductDetail";
 import Admin from "./pages/Admin";
 import AdminAuth from "./pages/AdminAuth";
@@ -20,7 +20,12 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/products/category/:categorySlug" element={<ProductList />} />
+          {/* New SEO-friendly product routes */}
+          <Route path="/product/:mainCategory" element={<ProductListNew />} />
+          <Route path="/product/:mainCategory/:subCategory" element={<ProductListNew />} />
+          <Route path="/product/detail/:productSlug" element={<ProductDetail />} />
+          {/* Legacy routes for backward compatibility */}
+          <Route path="/products/category/:categorySlug" element={<ProductListNew />} />
           <Route path="/products/detail/:productId" element={<ProductDetail />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin/auth" element={<AdminAuth />} />

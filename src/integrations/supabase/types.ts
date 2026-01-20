@@ -17,8 +17,10 @@ export type Database = {
       categories: {
         Row: {
           created_at: string
+          description: string | null
           display_order: number | null
           id: string
+          image_url: string | null
           is_active: boolean | null
           name: string
           parent_id: string | null
@@ -27,8 +29,10 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          description?: string | null
           display_order?: number | null
           id?: string
+          image_url?: string | null
           is_active?: boolean | null
           name: string
           parent_id?: string | null
@@ -37,8 +41,10 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          description?: string | null
           display_order?: number | null
           id?: string
+          image_url?: string | null
           is_active?: boolean | null
           name?: string
           parent_id?: string | null
@@ -67,9 +73,12 @@ export type Database = {
           image_url: string | null
           is_active: boolean | null
           main_category: string | null
+          price: string | null
+          procurement_id: string | null
           slug: string
           specs: Json | null
           subcategory: string | null
+          thumbnail_url: string | null
           title: string
           updated_at: string
         }
@@ -84,9 +93,12 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean | null
           main_category?: string | null
+          price?: string | null
+          procurement_id?: string | null
           slug: string
           specs?: Json | null
           subcategory?: string | null
+          thumbnail_url?: string | null
           title: string
           updated_at?: string
         }
@@ -101,9 +113,12 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean | null
           main_category?: string | null
+          price?: string | null
+          procurement_id?: string | null
           slug?: string
           specs?: Json | null
           subcategory?: string | null
+          thumbnail_url?: string | null
           title?: string
           updated_at?: string
         }

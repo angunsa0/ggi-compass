@@ -2,44 +2,57 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import officeChairImage from '@/assets/category-office-chair.png';
 import blackboardCabinetImage from '@/assets/category-blackboard-cabinet.png';
 import workstationImage from '@/assets/category-workstation.jpg';
 import cafeteriaImage from '@/assets/category-cafeteria.jpg';
 
-// Static category data for the main page display
-const categories = [
-  {
-    slug: 'blackboard-cabinet',
-    image: blackboardCabinetImage,
-    title: '칠판보조장',
-    description: '효율적인 수납과 슬라이딩 시스템으로 교실 정면의 완성도를 높이는 프리미엄 칠판보조장.',
-    badges: ['MAS 등록', '조달청 식별번호 보유'],
-  },
-  {
-    slug: 'workstation',
-    image: workstationImage,
-    title: '워크스테이션',
-    description: '업무 효율성을 극대화하는 모듈형 워크스테이션. 다양한 공간에 맞춤 설치 가능.',
-    badges: ['KS 인증', '모듈형 설계'],
-  },
-  {
-    slug: 'office-chair',
-    image: officeChairImage,
-    title: '오피스체어',
-    description: '인체공학적 설계로 장시간 착석에도 편안한 프리미엄 오피스체어.',
-    badges: ['인체공학', '높이 조절형'],
-  },
-  {
-    slug: 'cafeteria-furniture',
-    image: cafeteriaImage,
-    title: '식당가구',
-    description: '공공기관 식당에 최적화된 내구성 높은 식당 테이블 및 의자 세트.',
-    badges: ['친환경 소재', '고강도 내구성'],
-  },
-];
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  parent_id: string | null;
+  display_order: number;
+  description?: string;
+  image_url?: string;
+}
+
+// Default images for main categories
+const categoryImages: Record<string, string> = {
+  'educational': blackboardCabinetImage,
+  'office': workstationImage,
+  'chairs': officeChairImage,
+};
+
+// Badge labels for main categories
+const categoryBadges: Record<string, string[]> = {
+  'educational': ['MAS 등록', '조달청 등록'],
+  'office': ['KS 인증', '모듈형 설계'],
+  'chairs': ['인체공학', '높이 조절형'],
+};
 
 export const ProductsSection = () => {
+  const [mainCategories, setMainCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    const { data, error } = await supabase
+      .from('categories')
+      .select('*')
+      .is('parent_id', null)
+      .eq('is_active', true)
+      .order('display_order', { ascending: true });
+
+    if (!error && data) {
+      setMainCategories(data);
+    }
+  };
+
   return (
     <section id="products" className="py-24 bg-card">
       <div className="max-w-7xl mx-auto px-6">
@@ -52,30 +65,30 @@ export const ProductsSection = () => {
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {categories.map((category, index) => (
+        <div className="grid md:grid-cols-3 gap-8">
+          {mainCategories.map((category, index) => (
             <div
-              key={category.slug}
+              key={category.id}
               className="group bg-background rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="aspect-[4/3] overflow-hidden bg-muted">
                 <img
-                  src={category.image}
-                  alt={category.title}
+                  src={category.image_url || categoryImages[category.slug] || '/placeholder.svg'}
+                  alt={category.name}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   onError={(e) => {
                     e.currentTarget.src = '/placeholder.svg';
                   }}
                 />
               </div>
-              <div className="p-5">
-                <h3 className="text-lg font-bold text-primary mb-2">{category.title}</h3>
+              <div className="p-6">
+                <h3 className="text-xl font-bold text-primary mb-2">{category.name}</h3>
                 <p className="text-muted-foreground text-sm mb-4 leading-relaxed line-clamp-2">
-                  {category.description}
+                  {category.description || `${category.name} 제품을 만나보세요.`}
                 </p>
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {category.badges.map((badge) => (
+                  {(categoryBadges[category.slug] || ['프리미엄', '품질 보증']).map((badge) => (
                     <Badge
                       key={badge}
                       variant="secondary"
@@ -85,7 +98,7 @@ export const ProductsSection = () => {
                     </Badge>
                   ))}
                 </div>
-                <Link to={`/products/category/${category.slug}`}>
+                <Link to={`/product/${category.slug}`}>
                   <Button 
                     variant="outline" 
                     size="sm" 
@@ -102,7 +115,7 @@ export const ProductsSection = () => {
 
         {/* View All Products Button */}
         <div className="text-center mt-12">
-          <Link to="/products/category/all">
+          <Link to="/product/all">
             <Button variant="outline" size="lg">
               전체 제품 보기
               <ArrowRight className="ml-2 h-4 w-4" />
