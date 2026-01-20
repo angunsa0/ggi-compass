@@ -34,7 +34,59 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import * as XLSX from 'xlsx';
+// Excel handling utilities (secure implementation without vulnerable xlsx package)
+const parseCSV = (text: string): Record<string, string>[] => {
+  const lines = text.split('\n').filter(line => line.trim());
+  if (lines.length < 2) return [];
+  
+  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+  const rows: Record<string, string>[] = [];
+  
+  for (let i = 1; i < lines.length; i++) {
+    const values = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+    const row: Record<string, string> = {};
+    headers.forEach((header, index) => {
+      row[header] = values[index] || '';
+    });
+    rows.push(row);
+  }
+  
+  return rows;
+};
+
+const generateCSV = (data: Record<string, any>[]): string => {
+  if (data.length === 0) return '';
+  
+  const headers = Object.keys(data[0]);
+  const csvContent = [
+    headers.join(','),
+    ...data.map(row => 
+      headers.map(header => {
+        const value = String(row[header] || '');
+        // Escape commas and quotes
+        if (value.includes(',') || value.includes('"') || value.includes('\n')) {
+          return `"${value.replace(/"/g, '""')}"`;
+        }
+        return value;
+      }).join(',')
+    )
+  ].join('\n');
+  
+  return csvContent;
+};
+
+const downloadCSV = (data: Record<string, any>[], filename: string) => {
+  const csv = generateCSV(data);
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
 import type { User } from '@supabase/supabase-js';
 
 interface Product {
@@ -437,17 +489,15 @@ const Admin = () => {
     }
   };
 
-  const handleExcelUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCSVUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setIsUploading(true);
 
     try {
-      const data = await file.arrayBuffer();
-      const workbook = XLSX.read(data);
-      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+      const text = await file.text();
+      const jsonData = parseCSV(text);
 
       const products = jsonData.map((row: any, index: number) => ({
         slug: row['슬러그'] || row['slug'] || `product-${Date.now()}-${index}`,
@@ -506,21 +556,18 @@ const Admin = () => {
         '품명': '예시 제품',
         '규격': 'W1200 x D600 x H750',
         '조달식별번호': '12345678',
-        '가격': '500,000',
+        '가격': '500000',
         '제품설명': '제품 설명을 입력하세요',
         '이미지URL': 'https://example.com/image.jpg',
-        '뱃지': 'MAS 등록, KS 인증',
+        '뱃지': 'MAS 등록|KS 인증',
         '특징': '특징1|특징2|특징3',
         '대분류': 'educational',
         '소분류': 'blackboard-cabinet',
-        '순서': 1,
+        '순서': '1',
       }
     ];
 
-    const ws = XLSX.utils.json_to_sheet(template);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, '제품목록');
-    XLSX.writeFile(wb, '제품_업로드_템플릿.xlsx');
+    downloadCSV(template, '제품_업로드_템플릿.csv');
   };
 
   if (!user || isAdmin === null) {
@@ -815,8 +862,8 @@ const Admin = () => {
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept=".xlsx,.xls"
-                  onChange={handleExcelUpload}
+                  accept=".csv"
+                  onChange={handleCSVUpload}
                   className="hidden"
                 />
                 <Button
@@ -825,7 +872,7 @@ const Admin = () => {
                   disabled={isUploading}
                 >
                   <FileSpreadsheet className="mr-2 h-4 w-4" />
-                  {isUploading ? '업로드 중...' : '엑셀 대량 업로드'}
+                  {isUploading ? '업로드 중...' : 'CSV 대량 업로드'}
                 </Button>
                 <Button variant="outline" onClick={downloadTemplate}>
                   <Download className="mr-2 h-4 w-4" />
