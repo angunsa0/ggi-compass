@@ -89,14 +89,14 @@ export const Navbar = () => {
   };
 
   return (
-    <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-md z-50 shadow-sm border-b border-border">
-      <div className="max-w-7xl mx-auto px-6 h-20 justify-between items-center flex flex-row">
-        <Link to="/" className="flex items-center">
-          <img src={ggiLogo} alt="GGI 로고" className="h-12 w-auto" />
+    <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-md z-50 shadow-sm border-b border-border safe-area-inset">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 justify-between items-center flex flex-row">
+        <Link to="/" className="flex items-center touch-target">
+          <img src={ggiLogo} alt="GGI 로고" className="h-10 sm:h-12 w-auto" />
         </Link>
         
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
+        <div className="hidden md:flex items-center space-x-6 lg:space-x-8 text-sm font-medium">
           {navItems.map(item => {
             if (item.isExternal) {
               return (
@@ -105,7 +105,7 @@ export const Navbar = () => {
                   href={item.href} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="text-foreground/70 hover:text-primary transition-colors"
+                  className="text-foreground/70 hover:text-primary transition-colors py-2"
                 >
                   {item.label}
                 </a>
@@ -122,7 +122,7 @@ export const Navbar = () => {
                 >
                   <button 
                     className={cn(
-                      "text-foreground/70 hover:text-primary transition-colors flex items-center gap-1", 
+                      "text-foreground/70 hover:text-primary transition-colors flex items-center gap-1 py-2", 
                       activeSection === item.id && "text-primary"
                     )}
                   >
@@ -136,8 +136,8 @@ export const Navbar = () => {
                   {/* Mega Menu */}
                   {megaMenuOpen && (
                     <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2">
-                      <div className="bg-white rounded-xl shadow-2xl border border-border p-6 min-w-[600px]">
-                        <div className="grid grid-cols-3 gap-6">
+                      <div className="bg-white rounded-xl shadow-2xl border border-border p-6 min-w-[500px] lg:min-w-[600px]">
+                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
                           {mainCategories.map((mainCat) => (
                             <div key={mainCat.id} className="space-y-3">
                               <Link
@@ -184,7 +184,7 @@ export const Navbar = () => {
                 key={item.id} 
                 onClick={() => scrollToSection(item.id)} 
                 className={cn(
-                  "text-foreground/70 hover:text-primary transition-colors", 
+                  "text-foreground/70 hover:text-primary transition-colors py-2", 
                   activeSection === item.id && "text-primary"
                 )}
               >
@@ -200,16 +200,25 @@ export const Navbar = () => {
           </button>
         </div>
 
-        {/* Mobile Menu Button */}
-        <button className="md:hidden text-foreground" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+        {/* Mobile Menu Button - Touch-friendly 44px target */}
+        <button 
+          className="md:hidden text-foreground p-2 -mr-2 touch-target" 
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label={mobileMenuOpen ? "메뉴 닫기" : "메뉴 열기"}
+        >
           {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-border max-h-[calc(100vh-80px)] overflow-y-auto">
-          <div className="px-6 py-4 space-y-2">
+      {/* Mobile Menu - Slide from right with touch-friendly targets */}
+      <div 
+        className={cn(
+          "md:hidden fixed inset-0 top-16 sm:top-20 bg-white z-40 transform transition-transform duration-300 ease-in-out",
+          mobileMenuOpen ? "translate-x-0" : "translate-x-full"
+        )}
+      >
+        <div className="h-full overflow-y-auto overscroll-contain pb-safe">
+          <div className="px-4 sm:px-6 py-4 space-y-1">
             {navItems.map(item => {
               if (item.isExternal) {
                 return (
@@ -218,7 +227,7 @@ export const Navbar = () => {
                     href={item.href} 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="block w-full text-left text-foreground/70 hover:text-primary transition-colors py-3 border-b border-border/50"
+                    className="block w-full text-left text-foreground/70 hover:text-primary hover:bg-muted transition-colors py-4 px-3 rounded-lg text-base font-medium"
                   >
                     {item.label}
                   </a>
@@ -227,41 +236,41 @@ export const Navbar = () => {
 
               if (item.hasMegaMenu) {
                 return (
-                  <div key={item.id} className="border-b border-border/50">
+                  <div key={item.id} className="border-b border-border/30 last:border-b-0">
                     <button
                       onClick={() => toggleMobileCategory('products-main')}
-                      className="w-full text-left text-foreground/70 hover:text-primary transition-colors py-3 flex items-center justify-between"
+                      className="w-full text-left text-foreground/70 hover:text-primary hover:bg-muted transition-colors py-4 px-3 rounded-lg flex items-center justify-between text-base font-medium"
                     >
                       {item.label}
                       <ChevronDown className={cn(
-                        "h-4 w-4 transition-transform",
+                        "h-5 w-5 transition-transform",
                         expandedMobileCategory === 'products-main' && "rotate-180"
                       )} />
                     </button>
                     
                     {/* Mobile Accordion Categories */}
                     {expandedMobileCategory === 'products-main' && (
-                      <div className="pl-4 pb-3 space-y-1">
+                      <div className="pl-4 pb-3 space-y-1 animate-in slide-in-from-top-2 duration-200">
                         {mainCategories.map((mainCat) => (
                           <div key={mainCat.id}>
                             <button
                               onClick={() => toggleMobileCategory(mainCat.id)}
-                              className="w-full text-left text-sm font-medium text-primary py-2 flex items-center justify-between"
+                              className="w-full text-left font-semibold text-primary py-3 px-3 flex items-center justify-between rounded-lg hover:bg-muted transition-colors"
                             >
                               {mainCat.name}
                               <ChevronDown className={cn(
-                                "h-3 w-3 transition-transform",
+                                "h-4 w-4 transition-transform",
                                 expandedMobileCategory === mainCat.id && "rotate-180"
                               )} />
                             </button>
                             
                             {expandedMobileCategory === mainCat.id && (
-                              <div className="pl-4 space-y-1">
+                              <div className="pl-4 space-y-1 animate-in slide-in-from-top-2 duration-200">
                                 {getSubcategories(mainCat.id).map((subCat) => (
                                   <Link
                                     key={subCat.id}
                                     to={`/product/${mainCat.slug}/${subCat.slug}`}
-                                    className="block text-sm text-muted-foreground hover:text-primary py-1.5"
+                                    className="block text-muted-foreground hover:text-primary py-3 px-3 rounded-lg hover:bg-muted transition-colors"
                                     onClick={() => setMobileMenuOpen(false)}
                                   >
                                     {subCat.name}
@@ -269,7 +278,7 @@ export const Navbar = () => {
                                 ))}
                                 <Link
                                   to={`/product/${mainCat.slug}`}
-                                  className="block text-sm text-accent hover:text-primary py-1.5"
+                                  className="block text-accent font-medium hover:text-primary py-3 px-3 rounded-lg hover:bg-muted transition-colors"
                                   onClick={() => setMobileMenuOpen(false)}
                                 >
                                   {mainCat.name} 전체 보기
@@ -280,7 +289,7 @@ export const Navbar = () => {
                         ))}
                         <Link
                           to="/product/all"
-                          className="block text-sm font-medium text-accent hover:text-primary py-2"
+                          className="block font-semibold text-accent hover:text-primary py-3 px-3 rounded-lg hover:bg-muted transition-colors"
                           onClick={() => setMobileMenuOpen(false)}
                         >
                           전체 제품 보기
@@ -295,14 +304,32 @@ export const Navbar = () => {
                 <button 
                   key={item.id} 
                   onClick={() => scrollToSection(item.id)} 
-                  className="block w-full text-left text-foreground/70 hover:text-primary transition-colors py-3 border-b border-border/50"
+                  className="block w-full text-left text-foreground/70 hover:text-primary hover:bg-muted transition-colors py-4 px-3 rounded-lg text-base font-medium"
                 >
                   {item.label}
                 </button>
               );
             })}
+            
+            {/* Mobile CTA Button */}
+            <div className="pt-4 mt-4 border-t border-border">
+              <button 
+                onClick={() => scrollToSection('contact')} 
+                className="w-full bg-primary text-primary-foreground px-6 py-4 rounded-lg hover:bg-primary/90 transition-all font-bold shadow-md text-center"
+              >
+                견적/문의하기
+              </button>
+            </div>
           </div>
         </div>
+      </div>
+      
+      {/* Mobile menu backdrop */}
+      {mobileMenuOpen && (
+        <div 
+          className="md:hidden fixed inset-0 top-16 sm:top-20 bg-black/20 z-30"
+          onClick={() => setMobileMenuOpen(false)}
+        />
       )}
     </nav>
   );

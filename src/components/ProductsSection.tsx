@@ -68,40 +68,42 @@ export const ProductsSection = () => {
   };
 
   return (
-    <section id="products" className="py-24 bg-card">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <div className="inline-block px-3 py-1 bg-accent/10 text-accent text-xs font-bold rounded-full mb-6 uppercase tracking-widest">
+    <section id="products" className="py-16 sm:py-20 md:py-24 bg-card overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="text-center mb-10 sm:mb-12 md:mb-16">
+          <div className="inline-block px-3 py-1 bg-accent/10 text-accent text-xs font-bold rounded-full mb-4 sm:mb-6 uppercase tracking-widest">
             Our Products
           </div>
-          <h2 className="text-4xl md:text-5xl font-black text-primary">
+          <h2 className="heading-fluid-lg font-black text-primary">
             위대한 생각이 시작되는 공간
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        {/* Product Grid: 1 column on mobile, 2 on sm, 3 on md+ */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {mainCategories.map((category, index) => (
             <div
               key={category.id}
-              className="group bg-background rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in"
+              className="group bg-background rounded-xl sm:rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 md:hover:-translate-y-2 animate-fade-in"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="aspect-[4/3] overflow-hidden bg-muted">
                 <img
                   src={category.image_url || categoryImages[category.slug] || '/placeholder.svg'}
                   alt={category.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  className="w-full h-full object-cover group-hover:scale-105 md:group-hover:scale-110 transition-transform duration-500"
+                  loading="lazy"
                   onError={(e) => {
                     e.currentTarget.src = '/placeholder.svg';
                   }}
                 />
               </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-primary mb-2">{category.name}</h3>
-                <p className="text-muted-foreground text-sm mb-4 leading-relaxed line-clamp-2">
+              <div className="p-4 sm:p-5 md:p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-primary mb-2">{category.name}</h3>
+                <p className="text-muted-foreground text-sm mb-3 sm:mb-4 leading-relaxed line-clamp-2">
                   {category.description || `${category.name} 제품을 만나보세요.`}
                 </p>
-                <div className="flex flex-wrap gap-2 mb-4">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3 sm:mb-4">
                   {(categoryBadges[category.slug] || ['프리미엄', '품질 보증']).map((badge) => (
                     <Badge
                       key={badge}
@@ -116,7 +118,7 @@ export const ProductsSection = () => {
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                    className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors min-h-[44px]"
                   >
                     자세히 보기
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -128,9 +130,9 @@ export const ProductsSection = () => {
         </div>
 
         {/* View All Products Button */}
-        <div className="text-center mt-12">
+        <div className="text-center mt-8 sm:mt-10 md:mt-12">
           <Link to="/product/all">
-            <Button variant="outline" size="lg">
+            <Button variant="outline" size="lg" className="min-h-[48px] px-6">
               전체 제품 보기
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
