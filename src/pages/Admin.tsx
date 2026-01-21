@@ -47,7 +47,7 @@ interface Product {
   images?: string[] | null;
   badges: string[] | null;
   features: string[] | null;
-  specs: Record<string, any> | null;
+  specs: string | null;
   category: string | null;
   main_category: string | null;
   subcategory: string | null;
@@ -267,7 +267,7 @@ const Admin = () => {
       image_url: product.image_url || '',
       badges: product.badges?.join(', ') || '',
       features: product.features?.join('\n') || '',
-      specs: product.specs ? JSON.stringify(product.specs, null, 2) : '',
+      specs: product.specs || '',
       main_category: product.main_category || '',
       subcategory: product.subcategory || '',
       display_order: product.display_order || 0,
@@ -347,15 +347,8 @@ const Admin = () => {
   };
 
   const handleSave = async () => {
-    let parsedSpecs = {};
-    if (formData.specs) {
-      try {
-        parsedSpecs = JSON.parse(formData.specs);
-      } catch (e) {
-        toast.error('사양(specs) 필드의 JSON 형식이 올바르지 않습니다.');
-        return;
-      }
-    }
+    // specs is now stored as plain text, no JSON parsing needed
+    const specsText = formData.specs?.trim() || null;
 
     if (!formData.title.trim()) {
       toast.error('품명은 필수 입력 항목입니다.');
@@ -371,7 +364,7 @@ const Admin = () => {
         image_url: formData.images[0] || formData.image_url || null,
         badges: formData.badges ? formData.badges.split(',').map(b => b.trim()) : [],
         features: formData.features ? formData.features.split('\n').filter(f => f.trim()) : [],
-        specs: parsedSpecs,
+        specs: specsText,
         main_category: formData.main_category || null,
         subcategory: formData.subcategory || null,
         display_order: formData.display_order,

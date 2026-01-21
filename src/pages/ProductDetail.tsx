@@ -17,7 +17,7 @@ interface Product {
   images: string[] | null;
   badges: string[] | null;
   features: string[] | null;
-  specs: Record<string, any> | null;
+  specs: string | null;
   main_category: string | null;
   subcategory: string | null;
   procurement_id: string | null;
@@ -80,16 +80,10 @@ const ProductDetail = () => {
     );
   }
 
-  // Extract specs - can be object or string
-  const specs = product.specs;
-  const specsString = typeof specs === 'string' 
-    ? specs 
-    : specs?.['규격'] || specs?.size || specs?.dimensions || null;
+  // specs is now a plain string (규격 field)
+  const specsString = product.specs || null;
   
-  // Get model name from specs
-  const modelName = typeof specs === 'object' && specs !== null
-    ? (specs?.model || specs?.modelName || specs?.['모델명'] || null)
-    : null;
+  // No model name extraction needed since specs is now plain text
 
   // Prepare images array - combine images array and image_url
   const allImages: string[] = [];
@@ -136,7 +130,7 @@ const ProductDetail = () => {
             {/* Right: Product Info Table */}
             <div className="space-y-6">
               <ProductInfoTable
-                modelName={modelName}
+                modelName={null}
                 title={product.title}
                 specs={specsString}
                 procurementId={product.procurement_id}
