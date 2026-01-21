@@ -199,17 +199,18 @@ const ProductForm = ({
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="specs">규격 (사이즈)</Label>
-              <Input
-                id="specs"
-                value={formData.specs}
-                onChange={(e) => onFormChange({ specs: e.target.value })}
-                placeholder="W1200 x D600 x H750"
-              />
-              <p className="text-xs text-muted-foreground">가로×세로×높이</p>
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="specs">규격 (사이즈)</Label>
+            <Textarea
+              id="specs"
+              value={formData.specs}
+              onChange={(e) => onFormChange({ specs: e.target.value })}
+              placeholder="W1200 x D600 x H750&#10;재질: 스틸 프레임, MDF 상판&#10;색상: 화이트, 그레이"
+              rows={3}
+            />
+            <p className="text-xs text-muted-foreground">규격, 재질, 색상 등 자유롭게 입력 가능</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="procurement_id">조달번호</Label>
               <Input
