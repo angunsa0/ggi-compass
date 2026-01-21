@@ -96,7 +96,7 @@ export const Navbar = () => {
         </Link>
         
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center space-x-6 lg:space-x-8 text-sm font-medium">
+        <div className="hidden md:flex items-center space-x-6 lg:space-x-8 text-sm font-medium h-full">
           {navItems.map(item => {
             if (item.isExternal) {
               return (
@@ -116,7 +116,7 @@ export const Navbar = () => {
               return (
                 <div 
                   key={item.id}
-                  className="relative"
+                  className="relative flex items-center h-full"
                   onMouseEnter={() => setMegaMenuOpen(true)}
                   onMouseLeave={() => setMegaMenuOpen(false)}
                 >
