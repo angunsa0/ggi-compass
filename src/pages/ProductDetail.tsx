@@ -2,10 +2,11 @@ import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Phone, Mail, ChevronRight } from 'lucide-react';
+import { Phone, Mail, ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { ProductImageCarousel } from '@/components/ProductImageCarousel';
+import { ProductInfoTable } from '@/components/ProductInfoTable';
 
 interface Product {
   id: string;
@@ -13,6 +14,7 @@ interface Product {
   title: string;
   description: string | null;
   image_url: string | null;
+  images: string[] | null;
   badges: string[] | null;
   features: string[] | null;
   specs: Record<string, any> | null;
@@ -69,7 +71,6 @@ const ProductDetail = () => {
           <h1 className="text-3xl font-bold text-primary mb-4">제품을 찾을 수 없습니다</h1>
           <Link to="/product/all">
             <Button variant="outline">
-              <ArrowLeft className="mr-2 h-4 w-4" />
               제품 목록으로 돌아가기
             </Button>
           </Link>
@@ -79,103 +80,76 @@ const ProductDetail = () => {
     );
   }
 
-  const specs = product.specs as Record<string, string> | null;
+  // Extract specs - can be object or string
+  const specs = product.specs;
+  const specsString = typeof specs === 'string' 
+    ? specs 
+    : specs?.['규격'] || specs?.size || specs?.dimensions || null;
+  
+  // Get model name from specs
+  const modelName = typeof specs === 'object' && specs !== null
+    ? (specs?.model || specs?.modelName || specs?.['모델명'] || null)
+    : null;
+
+  // Prepare images array - combine images array and image_url
+  const allImages: string[] = [];
+  if (product.images && product.images.length > 0) {
+    allImages.push(...product.images.filter(img => img && img.trim() !== ''));
+  } else if (product.image_url) {
+    allImages.push(product.image_url);
+  }
+
+  // Get detail images (2nd and 3rd) for bottom section
+  const detailImages = allImages.slice(1);
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       
       <main className="pt-20">
-        <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-            <Link to="/" className="hover:text-primary">홈</Link>
-            <ChevronRight className="h-4 w-4" />
-            <Link to="/product/all" className="hover:text-primary">제품</Link>
+          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6 overflow-x-auto">
+            <Link to="/" className="hover:text-primary whitespace-nowrap">홈</Link>
+            <ChevronRight className="h-4 w-4 flex-shrink-0" />
+            <Link to="/product/all" className="hover:text-primary whitespace-nowrap">제품</Link>
             {product.main_category && (
               <>
-                <ChevronRight className="h-4 w-4" />
-                <Link to={`/product/${product.main_category}`} className="hover:text-primary">
+                <ChevronRight className="h-4 w-4 flex-shrink-0" />
+                <Link to={`/product/${product.main_category}`} className="hover:text-primary whitespace-nowrap">
                   {product.main_category}
                 </Link>
               </>
             )}
-            <ChevronRight className="h-4 w-4" />
-            <span className="text-primary font-medium">{product.title}</span>
+            <ChevronRight className="h-4 w-4 flex-shrink-0" />
+            <span className="text-primary font-medium truncate">{product.title}</span>
           </nav>
 
-          <div className="grid lg:grid-cols-2 gap-12">
-            {/* Product Image */}
-            <div className="rounded-2xl overflow-hidden shadow-xl">
-              <img
-                src={product.image_url || '/placeholder.svg'}
-                alt={product.title}
-                className="w-full h-full object-cover aspect-[4/3]"
-                onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }}
+          {/* Product Summary Section */}
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
+            {/* Left: Image Carousel */}
+            <ProductImageCarousel 
+              images={allImages}
+              productTitle={product.title}
+            />
+
+            {/* Right: Product Info Table */}
+            <div className="space-y-6">
+              <ProductInfoTable
+                modelName={modelName}
+                title={product.title}
+                specs={specsString}
+                procurementId={product.procurement_id}
+                price={product.price}
+                badges={product.badges}
               />
-            </div>
 
-            {/* Product Info */}
-            <div>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {product.badges?.map((badge) => (
-                  <Badge key={badge} variant="secondary" className="bg-accent/10 text-accent border-0 font-medium">
-                    {badge}
-                  </Badge>
-                ))}
-              </div>
-              
-              <h1 className="text-4xl font-black text-primary mb-4">{product.title}</h1>
-              
-              {/* Procurement ID & Price */}
-              {(product.procurement_id || product.price) && (
-                <div className="bg-muted/50 rounded-lg p-4 mb-6 space-y-2">
-                  {product.procurement_id && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-primary">조달식별번호:</span>
-                      <span className="text-sm text-muted-foreground">{product.procurement_id}</span>
-                    </div>
-                  )}
-                  {product.price && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-primary">가격:</span>
-                      <span className="text-lg font-bold text-accent">{product.price}원</span>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-                {product.description}
-              </p>
-
-              {/* Specs */}
-              {specs && Object.keys(specs).length > 0 && (
-                <div className="mb-8">
-                  <h2 className="text-xl font-bold text-primary mb-4">제품 사양</h2>
-                  <div className="bg-muted/50 rounded-xl p-6 space-y-3">
-                    {Object.entries(specs).map(([key, value]) => (
-                      <div key={key} className="flex">
-                        <span className="font-medium text-primary w-28">{key}</span>
-                        <span className="text-muted-foreground">{value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Features */}
-              {product.features && product.features.length > 0 && (
-                <div className="mb-8">
-                  <h2 className="text-xl font-bold text-primary mb-4">주요 특징</h2>
-                  <ul className="space-y-3">
-                    {product.features.map((feature, index) => (
-                      <li key={index} className="flex items-start">
-                        <span className="w-2 h-2 bg-accent rounded-full mt-2 mr-3 flex-shrink-0" />
-                        <span className="text-muted-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
+              {/* Description */}
+              {product.description && (
+                <div className="pt-4 border-t border-border">
+                  <p className="text-muted-foreground leading-relaxed">
+                    {product.description}
+                  </p>
                 </div>
               )}
 
@@ -186,17 +160,57 @@ const ProductDetail = () => {
                   제품에 대한 자세한 견적이나 문의사항이 있으시면 연락주세요.
                 </p>
                 <div className="flex flex-wrap gap-3">
-                  <Button className="bg-primary hover:bg-primary/90">
+                  <Button className="bg-primary hover:bg-primary/90 min-h-[44px]">
                     <Phone className="mr-2 h-4 w-4" />
                     전화 문의
                   </Button>
-                  <Button variant="outline">
+                  <Button variant="outline" className="min-h-[44px]">
                     <Mail className="mr-2 h-4 w-4" />
                     이메일 문의
                   </Button>
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Detailed Description Section */}
+          <div className="mt-12 md:mt-16 space-y-8">
+            {/* Features */}
+            {product.features && product.features.length > 0 && (
+              <div className="bg-card rounded-2xl p-6 md:p-8 shadow-sm">
+                <h2 className="text-xl md:text-2xl font-bold text-primary mb-6">주요 특징</h2>
+                <ul className="space-y-3">
+                  {product.features.map((feature, index) => (
+                    <li key={index} className="flex items-start">
+                      <span className="w-2 h-2 bg-accent rounded-full mt-2 mr-3 flex-shrink-0" />
+                      <span className="text-foreground">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Detail Images (2nd and 3rd from upload) */}
+            {detailImages.length > 0 && (
+              <div className="space-y-6">
+                <h2 className="text-xl md:text-2xl font-bold text-primary">상세 이미지</h2>
+                <div className="grid gap-6">
+                  {detailImages.map((image, index) => (
+                    <div 
+                      key={index} 
+                      className="rounded-2xl overflow-hidden bg-white shadow-lg"
+                    >
+                      <img
+                        src={image}
+                        alt={`${product.title} 상세 이미지 ${index + 1}`}
+                        className="w-full h-auto object-contain"
+                        onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </main>
