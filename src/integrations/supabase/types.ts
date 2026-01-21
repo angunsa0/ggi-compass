@@ -77,7 +77,7 @@ export type Database = {
           price: string | null
           procurement_id: string | null
           slug: string
-          specs: Json | null
+          specs: string | null
           subcategory: string | null
           thumbnail_url: string | null
           title: string
@@ -98,7 +98,7 @@ export type Database = {
           price?: string | null
           procurement_id?: string | null
           slug: string
-          specs?: Json | null
+          specs?: string | null
           subcategory?: string | null
           thumbnail_url?: string | null
           title: string
@@ -119,7 +119,7 @@ export type Database = {
           price?: string | null
           procurement_id?: string | null
           slug?: string
-          specs?: Json | null
+          specs?: string | null
           subcategory?: string | null
           thumbnail_url?: string | null
           title?: string
