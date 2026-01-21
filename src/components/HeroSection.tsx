@@ -32,7 +32,7 @@ export const HeroSection = () => {
   };
 
   return (
-    <section id="hero" className="relative min-h-screen">
+    <section id="hero" className="relative min-h-screen overflow-hidden">
       {/* Hero Background - Real classroom image with blue overlay (IKEA style) */}
       <div 
         className="absolute inset-0 bg-cover bg-center" 
@@ -42,58 +42,59 @@ export const HeroSection = () => {
       <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/70 to-primary/50" />
       
       {/* Hero Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-40 pb-20">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-28 sm:pt-32 md:pt-40 pb-16 md:pb-20">
         <div className="max-w-3xl">
-          <div className="inline-block px-4 py-1.5 bg-accent text-accent-foreground text-xs font-bold rounded-full mb-8 uppercase tracking-widest">
+          <div className="inline-block px-3 sm:px-4 py-1.5 bg-accent text-accent-foreground text-xs font-bold rounded-full mb-6 sm:mb-8 uppercase tracking-widest">
             Professional Education Furniture
           </div>
           
-          <div className="mb-8">
-            <h1 className="text-5xl md:text-7xl font-black text-white leading-tight tracking-tight">
+          <div className="mb-6 sm:mb-8">
+            <h1 className="heading-fluid-xl font-black text-white leading-tight tracking-tight">
               <span className="text-accent">G</span>lobal<br />
               <span className="text-accent">G</span>reat<br />
               <span className="text-accent">I</span>ntelligent
             </h1>
           </div>
           
-          <p className="text-xl md:text-2xl text-white/90 mb-10 leading-relaxed">
-            아이들의 무한한 상상력이 펼쳐지는 공간,<br />
+          <p className="text-lg sm:text-xl md:text-2xl text-white/90 mb-8 sm:mb-10 leading-relaxed">
+            아이들의 무한한 상상력이 펼쳐지는 공간,<br className="hidden sm:block" />
             <span className="text-accent font-semibold">GGI</span>가 만드는 미래 교육의 기반입니다.
           </p>
           
-          <div className="flex flex-wrap gap-4">
+          {/* Mobile: Stack buttons vertically, Desktop: Side by side */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <Button 
               size="lg" 
-              className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold px-8 py-6 text-base shadow-lg" 
+              className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold px-6 sm:px-8 py-5 sm:py-6 text-sm sm:text-base shadow-lg w-full sm:w-auto justify-center" 
               onClick={() => window.open('https://shop.g2b.go.kr/', '_blank')}
             >
-              <ExternalLink className="w-5 h-5 mr-2" />
-              조달청 나라장터 바로가기
+              <ExternalLink className="w-5 h-5 mr-2 flex-shrink-0" />
+              <span>조달청 나라장터 바로가기</span>
             </Button>
             <Button 
               size="lg" 
-              className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold px-8 py-6 text-base shadow-lg" 
+              className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold px-6 sm:px-8 py-5 sm:py-6 text-sm sm:text-base shadow-lg w-full sm:w-auto justify-center" 
               onClick={() => scrollToSection('about')}
             >
-              <Play className="w-5 h-5 mr-2" />
-              브랜드 스토리
+              <Play className="w-5 h-5 mr-2 flex-shrink-0" />
+              <span>브랜드 스토리</span>
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Feature Cards */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 pb-20">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Feature Cards - 1 column on mobile, 2 on sm, 4 on lg */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-16 md:pb-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {features.map((feature, index) => (
             <div 
               key={feature.title} 
-              className="bg-white/90 backdrop-blur-sm border border-border rounded-xl p-6 hover:shadow-lg transition-all group animate-fade-in" 
+              className="bg-white/90 backdrop-blur-sm border border-border rounded-xl p-4 sm:p-6 hover:shadow-lg transition-all group animate-fade-in" 
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <feature.icon className="w-8 h-8 text-accent mb-4 group-hover:scale-110 transition-transform" />
-              <h3 className="text-lg font-bold text-foreground mb-2">{feature.title}</h3>
-              <p className="text-sm text-muted-foreground">{feature.description}</p>
+              <feature.icon className="w-7 h-7 sm:w-8 sm:h-8 text-accent mb-3 sm:mb-4 group-hover:scale-110 transition-transform" />
+              <h3 className="text-base sm:text-lg font-bold text-foreground mb-1 sm:mb-2">{feature.title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
             </div>
           ))}
         </div>
