@@ -24,7 +24,7 @@ interface Product {
   image_url: string | null;
   badges: string[] | null;
   features: string[] | null;
-  specs: Record<string, any> | null;
+  specs: string | null;
   main_category: string | null;
   subcategory: string | null;
   category: string | null;

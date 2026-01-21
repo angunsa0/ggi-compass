@@ -25,7 +25,7 @@ export interface ProductImportData {
   images: string[];
   badges: string[];
   features: string[];
-  specs: Record<string, any>;
+  specs: string | null;
   main_category: string | null;
   subcategory: string | null;
   display_order: number;
@@ -84,12 +84,12 @@ export const parseProductCSV = async (file: File): Promise<{
         ? String(row['특징'] || row['features']).split('|').map((f: string) => f.trim().substring(0, 500)).slice(0, 20)
         : [],
       specs: (() => {
-        const specsStr = row['사양'] || row['specs'];
-        const size = row['규격'] || row['size'];
-        if (specsStr) {
-          return parseSpecs(specsStr);
-        }
-        return size ? { 규격: String(size).substring(0, 200) } : {};
+        // specs is now stored as plain text
+        const specsStr = row['사양'] || row['specs'] || '';
+        const size = row['규격'] || row['size'] || '';
+        if (specsStr) return String(specsStr).substring(0, 1000);
+        if (size) return String(size).substring(0, 200);
+        return null;
       })(),
       main_category: (row['대분류'] || row['main_category'] || null)?.substring(0, 100) || null,
       subcategory: (row['소분류'] || row['subcategory'] || null)?.substring(0, 100) || null,
@@ -116,13 +116,13 @@ export const parseProductCSV = async (file: File): Promise<{
  */
 export const convertToExportFormat = (products: any[]): ProductExportData[] => {
   return products.map((product, index) => {
-    const specs = product.specs || {};
-    const size = specs['규격'] || JSON.stringify(specs);
+    // specs is now a plain string
+    const specsValue = product.specs || '';
     
     return {
       슬러그: product.slug || '',
       품명: product.title || '',
-      규격: typeof size === 'string' ? size : JSON.stringify(size),
+      규격: specsValue,
       조달식별번호: product.procurement_id || '',
       가격: product.price || '',
       제품설명: product.description || '',

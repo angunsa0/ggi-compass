@@ -6,7 +6,7 @@ interface ProductCardProps {
   title: string;
   description: string | null;
   image_url: string | null;
-  specs: Record<string, any> | null;
+  specs: string | null;
   procurement_id: string | null;
   price: string | null;
 }
@@ -20,9 +20,8 @@ export const ProductCard = ({
   procurement_id,
   price,
 }: ProductCardProps) => {
-  // Extract model name and specifications from specs or title
-  const modelName = specs?.model || specs?.modelName || specs?.['모델명'] || null;
-  const dimensions = specs?.dimensions || specs?.size || specs?.['규격'] || null;
+  // specs is now a plain string (규격 field)
+  const dimensions = specs || null;
 
   // Format price with commas
   const formatPrice = (priceStr: string | null) => {
@@ -52,17 +51,17 @@ export const ProductCard = ({
 
       {/* Product Info */}
       <div className="p-4 flex flex-col flex-1">
-        {/* Model Name - Most Prominent */}
-        {modelName && (
-          <h3 className="text-lg md:text-xl font-black text-primary mb-1 group-hover:underline decoration-2 underline-offset-2 transition-all line-clamp-1">
-            {modelName}
-          </h3>
-        )}
-
         {/* Product Name */}
-        <p className={`font-semibold text-foreground mb-1 line-clamp-1 ${modelName ? 'text-sm md:text-base' : 'text-base md:text-lg font-bold text-primary group-hover:underline'}`}>
+        <p className="font-bold text-base md:text-lg text-primary group-hover:underline line-clamp-1 mb-1">
           {title}
         </p>
+
+        {/* Dimensions/Specs */}
+        {dimensions && (
+          <p className="text-xs md:text-sm text-muted-foreground mb-2 line-clamp-2 whitespace-pre-line">
+            {dimensions}
+          </p>
+        )}
 
         {/* Dimensions/Specs */}
         {dimensions && (
