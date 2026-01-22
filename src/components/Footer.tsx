@@ -1,7 +1,6 @@
 import { Phone, Printer, Mail, MapPin, Settings, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-
 export const Footer = () => {
   return <footer id="contact" className="bg-primary text-primary-foreground overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
@@ -37,7 +36,7 @@ export const Footer = () => {
             <div className="space-y-2 sm:space-y-3 text-sm text-primary-foreground/80">
               <p><span className="text-primary-foreground/60">상호:</span> 주식회사 지지아이</p>
               
-              <p><span className="text-primary-foreground/60">사업자등록번호:</span> 000-00-00000</p>
+              <p><span className="text-primary-foreground/60">사업자등록번호:</span>사업자등록번호: 234-81-05951</p>
               <p className="text-accent font-medium">대표자: 차경희</p>
             </div>
           </div>
