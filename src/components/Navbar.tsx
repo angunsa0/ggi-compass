@@ -224,140 +224,141 @@ export const Navbar = () => {
         </button>
       </div>
 
-      {/* Mobile Menu - Slide from right with touch-friendly targets */}
-      <div 
-        className={cn(
-          "md:hidden fixed inset-0 top-16 sm:top-20 bg-white z-40 transform transition-transform duration-300 ease-in-out",
-          mobileMenuOpen ? "translate-x-0" : "translate-x-full"
-        )}
-      >
-        <div className="h-full overflow-y-auto overscroll-contain pb-safe">
-          <div className="px-4 sm:px-6 py-4 space-y-1">
-            {navItems.map(item => {
-              if (item.isExternal) {
-                return (
-                  <a 
-                    key={item.id} 
-                    href={item.href} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="block w-full text-left text-foreground/70 hover:text-primary hover:bg-muted transition-colors py-4 px-3 rounded-lg text-base font-medium"
-                  >
-                    {item.label}
-                  </a>
-                );
-              }
+      {/* Mobile Menu Overlay Container */}
+      {mobileMenuOpen && (
+        <>
+          {/* Backdrop - must render BEFORE panel for proper stacking */}
+          <div 
+            className="md:hidden fixed inset-0 top-16 sm:top-20 bg-black/30 z-40"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
+          
+          {/* Mobile Menu Panel */}
+          <div 
+            className="md:hidden fixed inset-y-0 right-0 top-16 sm:top-20 w-full max-w-sm bg-white z-50 shadow-xl overflow-hidden animate-in slide-in-from-right duration-300"
+          >
+            <div className="h-full overflow-y-auto overscroll-contain pb-safe">
+              <div className="px-4 sm:px-6 py-4 space-y-1">
+                {navItems.map(item => {
+                  if (item.isExternal) {
+                    return (
+                      <a 
+                        key={item.id} 
+                        href={item.href} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="block w-full text-left text-foreground/70 hover:text-primary hover:bg-muted transition-colors py-4 px-3 rounded-lg text-base font-medium"
+                      >
+                        {item.label}
+                      </a>
+                    );
+                  }
 
-              if (item.hasMegaMenu) {
-                return (
-                  <div key={item.id} className="border-b border-border/30 last:border-b-0">
-                    <button
-                      onClick={() => toggleMobileCategory('products-main')}
-                      className="w-full text-left text-foreground/70 hover:text-primary hover:bg-muted transition-colors py-4 px-3 rounded-lg flex items-center justify-between text-base font-medium"
+                  if (item.hasMegaMenu) {
+                    return (
+                      <div key={item.id} className="border-b border-border/30 last:border-b-0">
+                        <button
+                          onClick={() => toggleMobileCategory('products-main')}
+                          className="w-full text-left text-foreground/70 hover:text-primary hover:bg-muted transition-colors py-4 px-3 rounded-lg flex items-center justify-between text-base font-medium"
+                        >
+                          {item.label}
+                          <ChevronDown className={cn(
+                            "h-5 w-5 transition-transform",
+                            expandedMobileCategory === 'products-main' && "rotate-180"
+                          )} />
+                        </button>
+                        
+                        {/* Mobile Accordion Categories */}
+                        {expandedMobileCategory === 'products-main' && (
+                          <div className="pl-4 pb-3 space-y-1 animate-in slide-in-from-top-2 duration-200">
+                            {mainCategories.map((mainCat) => (
+                              <div key={mainCat.id}>
+                                <button
+                                  onClick={() => toggleMobileCategory(mainCat.id)}
+                                  className="w-full text-left font-semibold text-primary py-3 px-3 flex items-center justify-between rounded-lg hover:bg-muted transition-colors"
+                                >
+                                  {mainCat.name}
+                                  <ChevronDown className={cn(
+                                    "h-4 w-4 transition-transform",
+                                    expandedMobileCategory === mainCat.id && "rotate-180"
+                                  )} />
+                                </button>
+                                
+                                {expandedMobileCategory === mainCat.id && (
+                                  <div className="pl-4 space-y-1 animate-in slide-in-from-top-2 duration-200">
+                                    {getSubcategories(mainCat.id).map((subCat) => (
+                                      <Link
+                                        key={subCat.id}
+                                        to={`/product/${mainCat.slug}/${subCat.slug}`}
+                                        className="block text-muted-foreground hover:text-primary py-3 px-3 rounded-lg hover:bg-muted transition-colors"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                      >
+                                        {subCat.name}
+                                      </Link>
+                                    ))}
+                                    <Link
+                                      to={`/product/${mainCat.slug}`}
+                                      className="block text-accent font-medium hover:text-primary py-3 px-3 rounded-lg hover:bg-muted transition-colors"
+                                      onClick={() => setMobileMenuOpen(false)}
+                                    >
+                                      {mainCat.name} 전체 보기
+                                    </Link>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                            <Link
+                              to="/product/all"
+                              className="block font-semibold text-accent hover:text-primary py-3 px-3 rounded-lg hover:bg-muted transition-colors"
+                              onClick={() => setMobileMenuOpen(false)}
+                            >
+                              전체 제품 보기
+                            </Link>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }
+
+                  if (item.isDeliveryCasesLink) {
+                    return (
+                      <Link 
+                        key={item.id}
+                        to="/delivery-cases"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="block w-full text-left text-foreground/70 hover:text-primary hover:bg-muted transition-colors py-4 px-3 rounded-lg text-base font-medium"
+                      >
+                        {item.label}
+                      </Link>
+                    );
+                  }
+
+                  return (
+                    <button 
+                      key={item.id} 
+                      onClick={() => scrollToSection(item.id)} 
+                      className="block w-full text-left text-foreground/70 hover:text-primary hover:bg-muted transition-colors py-4 px-3 rounded-lg text-base font-medium"
                     >
                       {item.label}
-                      <ChevronDown className={cn(
-                        "h-5 w-5 transition-transform",
-                        expandedMobileCategory === 'products-main' && "rotate-180"
-                      )} />
                     </button>
-                    
-                    {/* Mobile Accordion Categories */}
-                    {expandedMobileCategory === 'products-main' && (
-                      <div className="pl-4 pb-3 space-y-1 animate-in slide-in-from-top-2 duration-200">
-                        {mainCategories.map((mainCat) => (
-                          <div key={mainCat.id}>
-                            <button
-                              onClick={() => toggleMobileCategory(mainCat.id)}
-                              className="w-full text-left font-semibold text-primary py-3 px-3 flex items-center justify-between rounded-lg hover:bg-muted transition-colors"
-                            >
-                              {mainCat.name}
-                              <ChevronDown className={cn(
-                                "h-4 w-4 transition-transform",
-                                expandedMobileCategory === mainCat.id && "rotate-180"
-                              )} />
-                            </button>
-                            
-                            {expandedMobileCategory === mainCat.id && (
-                              <div className="pl-4 space-y-1 animate-in slide-in-from-top-2 duration-200">
-                                {getSubcategories(mainCat.id).map((subCat) => (
-                                  <Link
-                                    key={subCat.id}
-                                    to={`/product/${mainCat.slug}/${subCat.slug}`}
-                                    className="block text-muted-foreground hover:text-primary py-3 px-3 rounded-lg hover:bg-muted transition-colors"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                  >
-                                    {subCat.name}
-                                  </Link>
-                                ))}
-                                <Link
-                                  to={`/product/${mainCat.slug}`}
-                                  className="block text-accent font-medium hover:text-primary py-3 px-3 rounded-lg hover:bg-muted transition-colors"
-                                  onClick={() => setMobileMenuOpen(false)}
-                                >
-                                  {mainCat.name} 전체 보기
-                                </Link>
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                        <Link
-                          to="/product/all"
-                          className="block font-semibold text-accent hover:text-primary py-3 px-3 rounded-lg hover:bg-muted transition-colors"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          전체 제품 보기
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                );
-              }
-
-              if (item.isDeliveryCasesLink) {
-                return (
+                  );
+                })}
+                
+                {/* Mobile CTA Button */}
+                <div className="pt-4 mt-4 border-t border-border">
                   <Link 
-                    key={item.id}
-                    to="/delivery-cases"
+                    to="/inquiry"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="block w-full text-left text-foreground/70 hover:text-primary hover:bg-muted transition-colors py-4 px-3 rounded-lg text-base font-medium"
+                    className="block w-full bg-primary text-primary-foreground px-6 py-4 rounded-lg hover:bg-primary/90 transition-all font-bold shadow-md text-center"
                   >
-                    {item.label}
+                    견적/문의하기
                   </Link>
-                );
-              }
-
-              return (
-                <button 
-                  key={item.id} 
-                  onClick={() => scrollToSection(item.id)} 
-                  className="block w-full text-left text-foreground/70 hover:text-primary hover:bg-muted transition-colors py-4 px-3 rounded-lg text-base font-medium"
-                >
-                  {item.label}
-                </button>
-              );
-            })}
-            
-            {/* Mobile CTA Button */}
-            <div className="pt-4 mt-4 border-t border-border">
-              <Link 
-                to="/inquiry"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block w-full bg-primary text-primary-foreground px-6 py-4 rounded-lg hover:bg-primary/90 transition-all font-bold shadow-md text-center"
-              >
-                견적/문의하기
-              </Link>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-      
-      {/* Mobile menu backdrop */}
-      {mobileMenuOpen && (
-        <div 
-          className="md:hidden fixed inset-0 top-16 sm:top-20 bg-black/20 z-30"
-          onClick={() => setMobileMenuOpen(false)}
-        />
+        </>
       )}
     </nav>
   );
