@@ -93,10 +93,17 @@ export function AdminDashboard({ onNavigateToInquiries }: AdminDashboardProps) {
       .select('*', { count: 'exact', head: true })
       .eq('status', 'pending');
 
+    // Get today's catalog downloads
+    const { count: todayCatalogCount } = await supabase
+      .from('catalog_downloads')
+      .select('*', { count: 'exact', head: true })
+      .gte('created_at', today.toISOString());
+
     setSummaryData(prev => ({
       ...prev,
       newInquiries: newCount || 0,
       unansweredInquiries: unansweredCount || 0,
+      catalogDownloads: todayCatalogCount || 0,
     }));
   };
 
@@ -150,14 +157,13 @@ export function AdminDashboard({ onNavigateToInquiries }: AdminDashboardProps) {
       { name: '식당용', value: 8 },
     ]);
 
-    // Mock traffic data
+    // Mock traffic data (catalog downloads are now fetched from DB)
     setSummaryData(prev => ({
       ...prev,
       todayVisitors: Math.floor(Math.random() * 150) + 50,
       yesterdayVisitors: Math.floor(Math.random() * 150) + 50,
       todayPageViews: Math.floor(Math.random() * 500) + 200,
       yesterdayPageViews: Math.floor(Math.random() * 500) + 200,
-      catalogDownloads: Math.floor(Math.random() * 30) + 5,
       trafficSources: {
         naver: Math.floor(Math.random() * 100) + 50,
         google: Math.floor(Math.random() * 80) + 30,

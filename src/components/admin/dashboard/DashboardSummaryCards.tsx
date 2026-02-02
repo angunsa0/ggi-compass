@@ -104,12 +104,14 @@ export function DashboardSummaryCards({ data, isLoading }: DashboardSummaryCards
       {/* Catalog Downloads */}
       <Card className="border-l-4 border-l-green-500">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">카탈로그 다운로드</CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">카탈로그 조회</CardTitle>
           <Download className="h-4 w-4 text-green-500" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-foreground">{data.catalogDownloads}</div>
-          <p className="text-xs text-muted-foreground">이번 주 총 다운로드</p>
+          <p className="text-xs text-muted-foreground">
+            오늘 총 <span className="font-semibold text-green-600">{data.catalogDownloads}명</span>이 카탈로그를 확인했습니다
+          </p>
         </CardContent>
       </Card>
 
