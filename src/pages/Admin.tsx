@@ -17,7 +17,8 @@ import {
   Search,
   MessageSquare,
   Building2,
-  Users
+  Users,
+  LayoutDashboard
 } from 'lucide-react';
 import {
   Dialog,
@@ -41,6 +42,7 @@ import { AdminInquiryList } from '@/components/admin/AdminInquiryList';
 import AdminDeliveryCaseList from '@/components/admin/AdminDeliveryCaseList';
 import AdminUserRoleManager from '@/components/admin/AdminUserRoleManager';
 import ProductBulkUpload from '@/components/admin/ProductBulkUpload';
+import { AdminDashboard } from '@/components/admin/dashboard/AdminDashboard';
 import type { User } from '@supabase/supabase-js';
 
 interface Product {
@@ -105,7 +107,7 @@ const Admin = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [newCategoryParentId, setNewCategoryParentId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'products' | 'inquiries' | 'delivery-cases' | 'users'>('products');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'products' | 'inquiries' | 'delivery-cases' | 'users'>('dashboard');
   
   const navigate = useNavigate();
 
@@ -572,6 +574,14 @@ const Admin = () => {
         {/* Tab Navigation */}
         <div className="px-4 pb-3 flex gap-1 overflow-x-auto">
           <Button
+            variant={activeTab === 'dashboard' ? 'default' : 'ghost'}
+            onClick={() => setActiveTab('dashboard')}
+            className="min-h-[40px] flex-shrink-0"
+          >
+            <LayoutDashboard className="h-4 w-4 mr-2" />
+            대시보드
+          </Button>
+          <Button
             variant={activeTab === 'products' ? 'default' : 'ghost'}
             onClick={() => setActiveTab('products')}
             className="min-h-[40px] flex-shrink-0"
@@ -618,7 +628,9 @@ const Admin = () => {
 
         {/* Main Content */}
         <main className="flex-1 overflow-y-auto">
-          {activeTab === 'products' ? (
+          {activeTab === 'dashboard' ? (
+            <AdminDashboard onNavigateToInquiries={() => setActiveTab('inquiries')} />
+          ) : activeTab === 'products' ? (
             <div className="p-4 sm:p-6 space-y-4">
               {/* Toolbar */}
               <div className="flex flex-col sm:flex-row gap-3">
