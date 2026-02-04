@@ -2,7 +2,6 @@ import { ExternalLink, Play, BadgeCheck, Building2, Leaf, ShieldCheck } from 'lu
 import { Button } from '@/components/ui/button';
 import { CatalogDownloadButton } from '@/components/CatalogDownloadButton';
 import heroClassroom from '@/assets/hero-classroom.jpg';
-
 const features = [{
   icon: BadgeCheck,
   title: '여성기업',
@@ -20,7 +19,6 @@ const features = [{
   title: '품질 보증',
   description: '조달청 품질검사를 통과한 신뢰의 제품'
 }];
-
 export const HeroSection = () => {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -31,14 +29,11 @@ export const HeroSection = () => {
       });
     }
   };
-
-  return (
-    <section id="hero" className="relative min-h-screen overflow-hidden">
+  return <section id="hero" className="relative min-h-screen overflow-hidden">
       {/* Hero Background - Real classroom image with blue overlay (IKEA style) */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center" 
-        style={{ backgroundImage: `url(${heroClassroom})` }} 
-      />
+      <div className="absolute inset-0 bg-cover bg-center" style={{
+      backgroundImage: `url(${heroClassroom})`
+    }} />
       {/* Blue overlay for IKEA style */}
       <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/70 to-primary/50" />
       
@@ -53,7 +48,7 @@ export const HeroSection = () => {
             <h1 className="heading-fluid-xl font-black text-white leading-tight tracking-tight">
               <span className="text-accent">G</span>lobal<br />
               <span className="text-accent">G</span>reat<br />
-              <span className="text-accent">I</span>ntelligent
+              <span className="text-accent">I</span>ntelligent Furniture  
             </h1>
           </div>
           
@@ -64,20 +59,12 @@ export const HeroSection = () => {
           
           {/* Mobile: Stack buttons vertically, Desktop: Side by side */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-            <Button 
-              size="lg" 
-              className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold px-6 sm:px-8 py-5 sm:py-6 text-sm sm:text-base shadow-lg w-full sm:w-auto justify-center" 
-              onClick={() => window.open('https://shop.g2b.go.kr/', '_blank')}
-            >
+            <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold px-6 sm:px-8 py-5 sm:py-6 text-sm sm:text-base shadow-lg w-full sm:w-auto justify-center" onClick={() => window.open('https://shop.g2b.go.kr/', '_blank')}>
               <ExternalLink className="w-5 h-5 mr-2 flex-shrink-0" />
               <span>조달청 나라장터 바로가기</span>
             </Button>
             <CatalogDownloadButton variant="hero" />
-            <Button 
-              size="lg" 
-              className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white border border-white/40 font-bold px-6 sm:px-8 py-5 sm:py-6 text-sm sm:text-base shadow-lg w-full sm:w-auto justify-center" 
-              onClick={() => scrollToSection('about')}
-            >
+            <Button size="lg" className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white border border-white/40 font-bold px-6 sm:px-8 py-5 sm:py-6 text-sm sm:text-base shadow-lg w-full sm:w-auto justify-center" onClick={() => scrollToSection('about')}>
               <Play className="w-5 h-5 mr-2 flex-shrink-0" />
               <span>브랜드 스토리</span>
             </Button>
@@ -91,19 +78,14 @@ export const HeroSection = () => {
       {/* Feature Cards - 1 column on mobile, 2 on sm, 4 on lg */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-16 md:pb-20">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          {features.map((feature, index) => (
-            <div 
-              key={feature.title} 
-              className="bg-white/90 backdrop-blur-sm border border-border rounded-xl p-4 sm:p-6 hover:shadow-lg transition-all group animate-fade-in" 
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
+          {features.map((feature, index) => <div key={feature.title} className="bg-white/90 backdrop-blur-sm border border-border rounded-xl p-4 sm:p-6 hover:shadow-lg transition-all group animate-fade-in" style={{
+          animationDelay: `${index * 0.1}s`
+        }}>
               <feature.icon className="w-7 h-7 sm:w-8 sm:h-8 text-accent mb-3 sm:mb-4 group-hover:scale-110 transition-transform" />
               <h3 className="text-base sm:text-lg font-bold text-foreground mb-1 sm:mb-2">{feature.title}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
-            </div>
-          ))}
+            </div>)}
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
