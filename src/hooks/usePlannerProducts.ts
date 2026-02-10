@@ -1,0 +1,122 @@
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { FurnitureItem } from '@/types/planner';
+
+interface CategoryNode {
+  id: string;
+  name: string;
+  slug: string;
+  parentId: string | null;
+  children: CategoryNode[];
+}
+
+export const usePlannerCategories = () => {
+  return useQuery({
+    queryKey: ['planner-categories'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('id, name, slug, parent_id')
+        .eq('is_active', true)
+        .order('display_order');
+
+      if (error) throw error;
+
+      // Build tree: only return top-level categories
+      const topLevel = (data || []).filter(c => !c.parent_id);
+      const tree: CategoryNode[] = topLevel.map(cat => ({
+        id: cat.id,
+        name: cat.name,
+        slug: cat.slug,
+        parentId: null,
+        children: (data || [])
+          .filter(c => c.parent_id === cat.id)
+          .map(sub => ({
+            id: sub.id,
+            name: sub.name,
+            slug: sub.slug,
+            parentId: sub.parent_id,
+            children: [],
+          })),
+      }));
+
+      return tree;
+    },
+  });
+};
+
+export const usePlannerProducts = (categoryId: string | null) => {
+  return useQuery({
+    queryKey: ['planner-products', categoryId],
+    queryFn: async (): Promise<FurnitureItem[]> => {
+      if (!categoryId) return [];
+
+      // Get this category and its children
+      const { data: categories } = await supabase
+        .from('categories')
+        .select('id')
+        .or(`id.eq.${categoryId},parent_id.eq.${categoryId}`);
+
+      const catIds = (categories || []).map(c => c.id);
+      if (catIds.length === 0) return [];
+
+      const { data: products, error } = await supabase
+        .from('products')
+        .select('id, title, slug, price, thumbnail_url, category, main_category, subcategory, specs')
+        .eq('is_active', true)
+        .in('category', catIds)
+        .order('display_order');
+
+      if (error) throw error;
+
+      return (products || []).map(p => {
+        // Try to parse dimensions from specs JSON
+        let width = 800;
+        let height = 600;
+        let depth = 400;
+
+        if (p.specs) {
+          try {
+            const specs = typeof p.specs === 'string' ? JSON.parse(p.specs) : p.specs;
+            // Look for dimension-like fields
+            if (specs.width) width = parseInt(specs.width) || 800;
+            if (specs.height) height = parseInt(specs.height) || 600;
+            if (specs.depth) depth = parseInt(specs.depth) || 400;
+            if (specs['가로']) width = parseInt(specs['가로']) || 800;
+            if (specs['세로']) height = parseInt(specs['세로']) || 600;
+            if (specs['높이']) depth = parseInt(specs['높이']) || 400;
+          } catch {
+            // ignore parse errors
+          }
+        }
+
+        const priceNum = p.price ? parseInt(p.price.replace(/[^0-9]/g, '')) || 0 : 0;
+
+        return {
+          id: p.id,
+          name: p.title,
+          category: categoryId,
+          width,
+          height: height, // depth for top-view
+          depth,
+          price: priceNum,
+          thumbnail: p.thumbnail_url || '',
+          color: getCategoryColor(p.main_category || ''),
+        };
+      });
+    },
+    enabled: !!categoryId,
+  });
+};
+
+function getCategoryColor(mainCategory: string): string {
+  const colors: Record<string, string> = {
+    'educational': 'hsl(45, 40%, 85%)',
+    'office': 'hsl(210, 20%, 80%)',
+    'chairs': 'hsl(0, 0%, 30%)',
+    'dining-table': 'hsl(30, 40%, 70%)',
+    'lab-bench': 'hsl(180, 15%, 75%)',
+    'military': 'hsl(120, 15%, 65%)',
+  };
+  return colors[mainCategory] || 'hsl(210, 15%, 80%)';
+}

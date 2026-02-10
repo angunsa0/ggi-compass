@@ -1,9 +1,10 @@
 import { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ZoomIn, ZoomOut } from 'lucide-react';
+import { ArrowLeft, ZoomIn, ZoomOut, Box, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { FurnitureSidebar } from '@/components/planner/FurnitureSidebar';
 import { PlannerCanvas } from '@/components/planner/PlannerCanvas';
+import { PlannerCanvas3D } from '@/components/planner/PlannerCanvas3D';
 import { FurnitureDetailPanel } from '@/components/planner/FurnitureDetailPanel';
 import { RoomSettingsDialog } from '@/components/planner/RoomSettingsDialog';
 import { QuoteSummary } from '@/components/planner/QuoteSummary';
@@ -31,6 +32,7 @@ const SpacePlanner = () => {
   } = usePlannerState();
 
   const [consultationOpen, setConsultationOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'2d' | '3d'>('2d');
   const [, setDraggingFurniture] = useState<FurnitureItem | null>(null);
 
   const handleDragStart = useCallback((furniture: FurnitureItem) => {
@@ -64,31 +66,63 @@ const SpacePlanner = () => {
         </div>
         
         <div className="flex items-center gap-2">
+          {/* 2D/3D Toggle */}
+          <div className="flex items-center bg-primary-foreground/10 rounded-lg p-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setViewMode('2d')}
+              className={`h-8 px-3 text-xs font-bold gap-1 ${
+                viewMode === '2d'
+                  ? 'bg-primary-foreground/25 text-primary-foreground'
+                  : 'text-primary-foreground/60 hover:bg-primary-foreground/10'
+              }`}
+            >
+              <Layers className="h-3.5 w-3.5" />
+              2D
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setViewMode('3d')}
+              className={`h-8 px-3 text-xs font-bold gap-1 ${
+                viewMode === '3d'
+                  ? 'bg-primary-foreground/25 text-primary-foreground'
+                  : 'text-primary-foreground/60 hover:bg-primary-foreground/10'
+              }`}
+            >
+              <Box className="h-3.5 w-3.5" />
+              3D
+            </Button>
+          </div>
+
           <RoomSettingsDialog
             roomDimensions={roomDimensions}
             onSave={setRoomDimensions}
           />
-          <div className="flex items-center gap-1 bg-primary-foreground/10 rounded-lg p-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleZoomOut}
-              className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20"
-            >
-              <ZoomOut className="h-4 w-4" />
-            </Button>
-            <span className="text-xs px-2 min-w-[50px] text-center">
-              {Math.round(scale * 1000)}%
-            </span>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleZoomIn}
-              className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20"
-            >
-              <ZoomIn className="h-4 w-4" />
-            </Button>
-          </div>
+          {viewMode === '2d' && (
+            <div className="flex items-center gap-1 bg-primary-foreground/10 rounded-lg p-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleZoomOut}
+                className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20"
+              >
+                <ZoomOut className="h-4 w-4" />
+              </Button>
+              <span className="text-xs px-2 min-w-[50px] text-center">
+                {Math.round(scale * 1000)}%
+              </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleZoomIn}
+                className="h-8 w-8 text-primary-foreground hover:bg-primary-foreground/20"
+              >
+                <ZoomIn className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
         </div>
       </header>
 
@@ -98,15 +132,25 @@ const SpacePlanner = () => {
         <FurnitureSidebar onDragStart={handleDragStart} />
 
         {/* Center - Canvas */}
-        <PlannerCanvas
-          roomDimensions={roomDimensions}
-          placedFurniture={placedFurniture}
-          selectedId={selectedId}
-          scale={scale}
-          onDrop={handleDrop}
-          onSelect={setSelectedId}
-          onMove={updateFurniturePosition}
-        />
+        {viewMode === '2d' ? (
+          <PlannerCanvas
+            roomDimensions={roomDimensions}
+            placedFurniture={placedFurniture}
+            selectedId={selectedId}
+            scale={scale}
+            onDrop={handleDrop}
+            onSelect={setSelectedId}
+            onMove={updateFurniturePosition}
+          />
+        ) : (
+          <PlannerCanvas3D
+            roomDimensions={roomDimensions}
+            placedFurniture={placedFurniture}
+            selectedId={selectedId}
+            scale={scale}
+            onSelect={setSelectedId}
+          />
+        )}
 
         {/* Right Panel - Details */}
         <FurnitureDetailPanel
