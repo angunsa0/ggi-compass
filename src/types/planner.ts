@@ -5,6 +5,7 @@ export interface FurnitureItem {
   category: string;
   width: number; // mm
   height: number; // mm (depth for top-view)
+  depth?: number; // mm (vertical height for 3D)
   price: number;
   thumbnail: string;
   color?: string;
