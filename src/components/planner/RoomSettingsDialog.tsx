@@ -35,8 +35,8 @@ export const RoomSettingsDialog = ({ roomDimensions, onSave }: RoomSettingsDialo
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="secondary" size="lg" className="gap-2 font-bold text-sm border-2 border-accent bg-accent/10 hover:bg-accent/20 text-accent-foreground shadow-md">
-          <Settings2 className="h-5 w-5" />
+        <Button size="lg" className="gap-2 font-extrabold text-base border-2 shadow-lg px-5 py-3 animate-pulse hover:animate-none" style={{ backgroundColor: '#FFD700', color: '#1a1a1a', borderColor: '#e6b800' }}>
+          <Settings2 className="h-6 w-6" />
           공간 크기 설정
         </Button>
       </DialogTrigger>
